@@ -1,0 +1,12 @@
+name: ocr
+channels:
+  - pytorch
+  - defaults
+dependencies:
+  - tensorboardX
+  - opencv
+  - tqdm
+  - h5py
+  - cudatoolkit
+  - torchvision
+  - pytorch

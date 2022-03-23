@@ -1,8 +1,7 @@
-import data
-from data import CharDataset
+import data_clova
 import torch
+import tqdm
+import korean_util as ku
+from train_clova import train_one_epoch
 
-data.generate_data()
-dataset = CharDataset()
-data_loader = torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=True, sampler=None, num_workers=0, pin_memory=True)
 

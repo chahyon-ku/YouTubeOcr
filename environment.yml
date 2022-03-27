@@ -5,6 +5,7 @@ channels:
 dependencies:
   - tensorboardX
   - opencv
+  - pil
   - tqdm
   - h5py
   - cudatoolkit

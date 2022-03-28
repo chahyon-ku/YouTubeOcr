@@ -54,6 +54,16 @@ def generate_data(font_paths, img_size=32):
             start = time.time()
 
 
+def generate_nanum_data():
+    font_paths = []
+    for root, dir, files in os.walk('fonts/nanum'):
+        for file in files:
+            if file[-4:] == '.ttf' and file[:11] != 'NanumSquare':
+                font_paths.append((root, file))
+    print(font_paths)
+    generate_data(font_paths, 64)
+
+
 class CharDataset(torch.utils.data.Dataset):
     def __init__(self, h5_path='data/clova.h5'):
         super(CharDataset, self).__init__()
@@ -87,6 +97,7 @@ class CharColorDataset(torch.utils.data.Dataset):
             self.fonts = list(h5_file.keys())
         self.font_indices = {f: i for i, f in enumerate(self.fonts)}
         self.to_tensor = torchvision.transforms.ToTensor()
+        self.normalize = torchvision.transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
 
     def __getitem__(self, index):
         if self.h5_file is None:
@@ -101,9 +112,10 @@ class CharColorDataset(torch.utils.data.Dataset):
         back_color = np.random.randint(0, 256, 3, np.int16)
         color_img[:, :] = back_color
         color_img[:, :, 0] = (color_img[:, :, 0] + img * np.random.randint(-back_color[0], 256 - back_color[0], 1, np.int16) // 255).astype(np.int16)
-        color_img[:, :, 1] = (color_img[:, :, 0] + img * np.random.randint(-back_color[1], 256 - back_color[1], 1, np.int16) // 255).astype(np.int16)
-        color_img[:, :, 2] = (color_img[:, :, 0] + img * np.random.randint(-back_color[2], 256 - back_color[2], 1, np.int16) // 255).astype(np.int16)
+        color_img[:, :, 1] = (color_img[:, :, 1] + img * np.random.randint(-back_color[1], 256 - back_color[1], 1, np.int16) // 255).astype(np.int16)
+        color_img[:, :, 2] = (color_img[:, :, 2] + img * np.random.randint(-back_color[2], 256 - back_color[2], 1, np.int16) // 255).astype(np.int16)
         color_img = self.to_tensor(color_img.astype(np.uint8))
+        color_img = self.normalize(color_img)
         return color_img, init, medial, final, font_i
 
     def __len__(self):

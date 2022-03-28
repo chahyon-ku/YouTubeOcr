@@ -17,8 +17,6 @@ def test_one_epoch(model, loss_fn, data_loader, DEVICE):
     batch_i = 0
     start = time.time()
     for imgs, inis, meds, fins, font_i in data_loader_tqdm:
-        if batch_i == 1:
-            break
         imgs = imgs.to(DEVICE)
         inis = inis.to(DEVICE)
         meds = meds.to(DEVICE)
@@ -75,16 +73,16 @@ def test_one_epoch(model, loss_fn, data_loader, DEVICE):
 if __name__ == '__main__':
     DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     BATCH_SIZE = 32
-    dataset = data_clova.CharColorDataset('data/clova.h5')
-    data_loader = torch.utils.data.DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True, sampler=None, num_workers=2,
+    dataset = data_clova.CharColorDataset('data/nanum-32.h5')
+    data_loader = torch.utils.data.DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True, sampler=None, num_workers=1,
                                               pin_memory=True)
 
-    model = char_class_model.CharClassModel(3, 32, len(ku.CHAR_INITIALS) + len(ku.CHAR_MEDIALS) + len(ku.CHAR_FINALS) + 1)
-    model.load_state_dict(torch.load('models/clova-c-32.pth'))
+    model = char_class_model.CharClassModel(3, 32, len(ku.CHAR_INITIALS) + len(ku.CHAR_MEDIALS) + len(ku.CHAR_FINALS) + 1, 32)
+    model.load_state_dict(torch.load('models/nanum-c-32-3.pth'))
     model = model.to(DEVICE)
     loss_fn = torch.nn.CrossEntropyLoss()
     optim = torch.optim.Adam(model.parameters())
     #writer = tensorboardX.SummaryWriter('../log/clova/'+str(int(time.time())))
 
-    for epoch in range(100):
+    for epoch in range(1):
         test_one_epoch(model, loss_fn, data_loader, DEVICE)

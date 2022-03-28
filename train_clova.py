@@ -53,7 +53,7 @@ def train_one_epoch(model, loss_fn, optim, data_loader, DEVICE, epoch_i):
         writer.add_scalar('accuracy_ini', accuracy_ini, batch_i + epoch_i * len(data_loader))
         writer.add_scalar('accuracy_med', accuracy_med, batch_i + epoch_i * len(data_loader))
         writer.add_scalar('accuracy_fin', accuracy_fin, batch_i + epoch_i * len(data_loader))
-        writer.add_scalar('accuracy_all', accuracy_fin, batch_i + epoch_i * len(data_loader))
+        writer.add_scalar('accuracy_all', accuracy_all, batch_i + epoch_i * len(data_loader))
 
         batch_time = time.time() - start
         start = time.time()
@@ -69,11 +69,12 @@ if __name__ == '__main__':
     BATCH_SIZE = 1024
 
     # data.generate_data()
-    dataset = data_clova.CharColorDataset('data/clova-32.h5')
+    dataset = data_clova.CharColorDataset('data/nanum-32.h5')
     data_loader = torch.utils.data.DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True, sampler=None, num_workers=1,
                                               pin_memory=True)
 
     model = char_class_model.CharClassModel(3, 32, len(ku.CHAR_INITIALS) + len(ku.CHAR_MEDIALS) + len(ku.CHAR_FINALS) + 1, 32)
+    model.load_state_dict(torch.load('models/nanum-c-32-2.pth'))
     print('n_parameters:', sum(p.numel() for p in model.parameters()))
     model = model.to(DEVICE)
     loss_fn = torch.nn.CrossEntropyLoss()

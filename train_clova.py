@@ -69,12 +69,12 @@ if __name__ == '__main__':
     BATCH_SIZE = 1024
 
     # data.generate_data()
-    dataset = data_clova.CharColorDataset('data/nanum-32.h5')
+    dataset = data_clova.CharColorDataset('data/clova-32.h5')
     data_loader = torch.utils.data.DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True, sampler=None, num_workers=1,
                                               pin_memory=True)
 
     model = char_class_model.CharClassModel(3, 32, len(ku.CHAR_INITIALS) + len(ku.CHAR_MEDIALS) + len(ku.CHAR_FINALS) + 1, 32)
-    model.load_state_dict(torch.load('models/nanum-c-32-2.pth'))
+    #model.load_state_dict(torch.load('models/nanum-c-32-2.pth'))
     print('n_parameters:', sum(p.numel() for p in model.parameters()))
     model = model.to(DEVICE)
     loss_fn = torch.nn.CrossEntropyLoss()
